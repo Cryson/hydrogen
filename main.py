@@ -23,30 +23,32 @@ def main():
 	""" Check for occupancy and act accordingly """
 	program = ecobee.get_current_climate_setting(1)
 	occupancy = ecobee.get_remote_sensors(0)[1]['capability'][2]['value']  # Check if someone is home via proximity
-	if program == "sleep":
-		logging.info("Ecobee is reporting sleep program, setting result to 2")
-		result = 2
-	elif program != "sleep":
-		occupancy = ecobee.get_remote_sensors(0)[1]['capability'][2]['value']  # Check if someone is home via proximity
-		if occupancy == "true":
-			with open('hydrogen/cache/occupancy.cache', 'w') as outfile:
-				outfile.write("0")
-			logging.info("Someone is home, setting result to 2")
+	peakhours = hydrogen.check_gmail()
+	if peakhours == 1:
+		result = 1
+	elif peakhours != 1:
+		if program == "sleep":
+			logging.info("Ecobee is reporting sleep program, setting result to 2")
 			result = 2
-		elif occupancy == "false":
-			with open('hydrogen/cache/occupancy.cache', 'r') as infile:
-				occupancyint = infile.read()
-			with open('hydrogen/cache/occupancy.cache', 'w') as outfile:
-				occupancyint += 1
-				outfile.write(occupancyint)
-				logging.info("Occupancy said nobody is home, increasing cache to " + str(occupancyint))
-			with open('hydrogen/cache/occupancy.cache', 'r') as infile:
-				occupancyint = infile.read()
-			if occupancyint >= 9:
-				logging.info("Looks like nobody is home, turning to off hvac mode to save power")
-				result = 4
-			elif occupancyint <= 8:
-				result = hydrogen.check_gmail()
+		elif program != "sleep":
+			if occupancy == "true":
+				with open('hydrogen/cache/occupancy.cache', 'w') as outfile:
+					outfile.write("0")
+				logging.info("Someone is home, setting result to 2")
+				result = 2
+			elif occupancy == "false":
+				with open('hydrogen/cache/occupancy.cache', 'r') as infile:
+					occupancyint = infile.read()
+				with open('hydrogen/cache/occupancy.cache', 'w') as outfile:
+					occupancyint += 1
+					outfile.write(occupancyint)
+					logging.info("Occupancy said nobody is home, increasing cache to " + str(occupancyint))
+				with open('hydrogen/cache/occupancy.cache', 'r') as infile:
+					occupancyint = infile.read()
+				if occupancyint >= 9:
+					logging.info("Looks like nobody is home, turning to off hvac mode to save power")
+					result = 4
+
 
 	""" Check for results of test and act accordingly """
 	""" Result of 1 means that the ecobees need to be turned off to avoid peak hours """

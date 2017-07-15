@@ -18,15 +18,19 @@ thermostatlist = [0, 1]
 
 def main():
 	now = datetime.datetime.now()
+	logging.info("######################")
 	logging.info("Hydrogen ran at " + str(now))
+	logging.info("######################")
 
 	""" Check for occupancy and act accordingly """
 	program = ecobee.get_current_climate_setting(1)
 	occupancy = ecobee.get_remote_sensors(0)[1]['capability'][2]['value']  # Check if someone is home via proximity
 	peakhours = hydrogen.check_gmail()
 	if peakhours == 1:
+		logging.info("Peak hours WERE found in hydrogen_check_gmail")
 		result = 1
 	elif peakhours != 1:
+		logging.info("Peak hours were NOT found in hydrogen_check_gmail")
 		if program == "sleep":
 			logging.info("Ecobee is reporting sleep program, setting result to 2")
 			result = 2

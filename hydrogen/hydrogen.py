@@ -46,7 +46,7 @@ def check_gmail():
 	valid=''
 	credentials = get_credentials()
 	http = credentials.authorize(httplib2.Http())
-	service = discovery.build('gmail', 'v1', http=http)
+	service = discovery.build('gmail', 'v1', http=http, cache_discovery=False)
 	today = str(datetime.date.today())
 	yesterday = str(datetime.date.fromordinal(datetime.date.today().toordinal() - 1))
 	todayhours = int(datetime.datetime.now().strftime("%H"))  # Hour of the day in 24 hour format

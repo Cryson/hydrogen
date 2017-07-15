@@ -42,10 +42,10 @@ def main():
 				result = 2
 			elif occupancy == "false":
 				with open('hydrogen/cache/occupancy.cache', 'r') as infile:
-					occupancyint = infile.read()
+					occupancyint = int(infile.read())
 				with open('hydrogen/cache/occupancy.cache', 'w') as outfile:
 					occupancyint += 1
-					outfile.write(occupancyint)
+					outfile.write(str(occupancyint))
 					logging.info("Occupancy said nobody is home, increasing cache to " + str(occupancyint))
 				with open('hydrogen/cache/occupancy.cache', 'r') as infile:
 					occupancyint = infile.read()

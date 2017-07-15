@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+
 import sys
+import os
 import logging
 import requests
 import datetime
@@ -36,12 +39,13 @@ def main():
 			with open('hydrogen/cache/occupancy.cache', 'w') as outfile:
 				occupancyint += 1
 				outfile.write(occupancyint)
+				logging.info("Occupancy said nobody is home, increasing cache to " + str(occupancyint))
 			with open('hydrogen/cache/occupancy.cache', 'r') as infile:
 				occupancyint = infile.read()
-			if occupancyint >= 5:
+			if occupancyint >= 9:
 				logging.log("Looks like nobody is home, turning to off hvac mode to save power")
 				result = 4
-			elif occupancyint <= 4:
+			elif occupancyint <= 8:
 				result = hydrogen.check_gmail()
 
 	""" Check for results of test and act accordingly """
@@ -76,4 +80,5 @@ def main():
 		sys.exit(0)
 
 if __name__ == '__main__':
+	os.path.dirname(os.path.realpath(__file__))
 	main()

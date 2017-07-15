@@ -3,7 +3,6 @@ import logging
 import requests
 import datetime
 
-
 from ecobee import ecobee
 from hydrogen import hydrogen
 

@@ -49,12 +49,12 @@ def check_gmail():
 	service = discovery.build('gmail', 'v1', http=http)
 	today = str(datetime.date.today())
 	yesterday = str(datetime.date.fromordinal(datetime.date.today().toordinal() - 1))
-	todayhours = int(datetime.datetime.now().strftime("%H"))  #Hour of the day in 24 hour format
+	todayhours = int(datetime.datetime.now().strftime("%H"))  # Hour of the day in 24 hour format
 
-	if todayhours not in range(14, 19): #Check if it is peak hours for CobbEMC
+	if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
 		return 2
 
-	#Check Gmail messages with label 41(CobbEMC Peak Hours)
+	# Check Gmail messages with label 41(CobbEMC Peak Hours)
 	messages = service.users().messages().list(userId='me', labelIds='Label_41').execute().get('messages', [])
 	for message in messages:
 		tdata = service.users().messages().get(userId='me', id=message['id']).execute()

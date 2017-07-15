@@ -2,7 +2,7 @@ import json
 import requests
 import logging
 
-logging.basicConfig(filename='log/hydrogen.log', level=logging.DEBUG)
+logging.basicConfig(filename='log/hydrogen.log', level=logging.INFO)
 
 with open('ecobee/data/ecobee_secret.json') as data_file:
 	data = json.load(data_file)
@@ -62,6 +62,7 @@ def get_thermostats():
 						'"includeSensors":"true",'
 						'"includeProgram":"true",'
 						'"includeEquipmentStatus":"true",'
+						'"includeWeather":"true",'
 						'"includeEvents":"true",'
 						'"includeSettings":"true"}}')}
 	request = requests.get(url, headers=header, params=params)
@@ -110,7 +111,19 @@ def get_weather(index):
 	header = {'Content-Type': 'application/json;charset=UTF-8', 'Authorization': 'Bearer ' + accesstoken}
 	params = {'format': 'json'}
 	body = ('{"selection":{"selectionType":"thermostats","selectionMatch":'
-			'"' + thermostats[index]['identifier'] +
-			'"},"thermostat":{"weatherforecast":{"temperature":"}}}')
+			'"' + thermostats[index] +
+			'"},"thermostat":{"weather":{"forecast":"}}}')
 	request = requests.post(url, headers=header, params=params, data=body)
 	print request.json()
+
+
+def get_remote_sensors(index):
+	''' Return remote sensors based on index '''
+	thermostats = get_thermostats()
+	return thermostats[index]['remoteSensors']
+
+
+def get_current_climate_setting(index):
+	''' Return sleep, away, or home '''
+	thermostats = get_thermostats()
+	return thermostats[index]['program']['currentClimateRef']

@@ -43,7 +43,7 @@ def main():
 			with open('hydrogen/cache/occupancy.cache', 'r') as infile:
 				occupancyint = infile.read()
 			if occupancyint >= 9:
-				logging.log("Looks like nobody is home, turning to off hvac mode to save power")
+				logging.info("Looks like nobody is home, turning to off hvac mode to save power")
 				result = 4
 			elif occupancyint <= 8:
 				result = hydrogen.check_gmail()

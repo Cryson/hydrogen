@@ -1,6 +1,9 @@
 import json
 import urllib2
 import ConfigParser
+import logging
+
+logging.basicConfig(filename='log/hydrogen.log', level=logging.INFO)
 
 Config = ConfigParser.ConfigParser()
 Config.read('wunderground/config/config.ini')

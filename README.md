@@ -1,4 +1,6 @@
-![Hydrogen](hydrogen.png)
+<p align="center">
+  <img src="hydrogen.png" />
+</p>
 
 -----------------
 

@@ -94,6 +94,6 @@ def hydrogen():
 	if valid == 1:
 		logging.info("Ecobee's need to be turned off to avoid peak hours that CobbEMC has set for " + today + " from 2 P.M. EST to 7 P.M. EST")
 		return 1
-	elif:
+	elif valid != 1:
 		logging.error("Something went wrong with the hydrogen message cache and we couldn't read the dates")
 		return 2

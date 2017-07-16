@@ -47,8 +47,8 @@ def checkcache_mtime():
 	epoch = os.path.getmtime('hydrogen/cache/messages.cache')
 	currenttime = time.time()
 	seconds = currenttime - epoch
-	minutes = seconds // 60 % 60
-	return minutes
+	hours = seconds // 3600 % 24
+	return hours 
 
 
 def check_gmail():
@@ -68,7 +68,7 @@ def check_gmail():
 
 def hydrogen():
 	valid=''
-	minutes = checkcache_mtime()
+	cache_age = checkcache_mtime()
 	yesterday = str(datetime.date.fromordinal(datetime.date.today().toordinal() - 1))
 	todayhours = int(datetime.datetime.now().strftime("%H"))  # Hour of the day in 24 hour format
 	today = str(datetime.date.today())
@@ -77,14 +77,15 @@ def hydrogen():
 		logging.info("Hydrogen is reporting that it's not peak hours. Current hour is " + str(todayhours))
 		return 2
 
-	if minutes < 288:
-		logging.info("Messages cache file is not 288 minutes old, reading from cache file")
+	if cache_age <= 4:
+		logging.info("Messages cache file is not 5 hours old, reading from cache file")
 		with open('hydrogen/cache/messages.cache') as data_file:
 			for line in data_file:
 				if line.rstrip('\n') == yesterday:
 					valid = 1
 					break
-	elif minutes > 288:
+	elif cache_age >= 5:
+		logging.info("Messages cache file is 5 hours old, grabbing new gmail data")
 		open('hydrogen/cache/messages.cache', 'w').close()  # Clear the cache file
 		check_gmail()
 		with open('hydrogen/cache/messages.cache') as data_file:

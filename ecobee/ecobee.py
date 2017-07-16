@@ -103,21 +103,6 @@ def set_hvac_mode(index, hvac_mode):
 		refresh_tokens()
 
 
-def get_weather(index):
-	with open('ecobee/data/ecobee_tokens.json') as data_file:
-		data = json.load(data_file)
-		accesstoken = data['access_token']
-	thermostats = get_thermostats()
-	url = 'https://api.ecobee.com/1/thermostat'
-	header = {'Content-Type': 'application/json;charset=UTF-8', 'Authorization': 'Bearer ' + accesstoken}
-	params = {'format': 'json'}
-	body = ('{"selection":{"selectionType":"thermostats","selectionMatch":'
-			'"' + thermostats[index] +
-			'"},"thermostat":{"weather":{"forecast":"}}}')
-	request = requests.post(url, headers=header, params=params, data=body)
-	print request.json()
-
-
 def get_remote_sensors(index):
 	''' Return remote sensors based on index '''
 	thermostats = get_thermostats()

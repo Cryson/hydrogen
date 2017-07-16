@@ -3,6 +3,7 @@ import httplib2
 import os
 import logging
 import datetime
+import time
 
 from apiclient import discovery
 from oauth2client import client
@@ -42,17 +43,18 @@ def get_credentials():
 	return credentials
 
 
+def checkcache_mtime():
+	epoch = os.path.getmtime('hydrogen/cache/messages.cache')
+	currenttime = time.time()
+	seconds = currenttime - epoch
+	minutes = seconds // 60 % 60
+	return minutes
+
+
 def check_gmail():
-	valid=''
 	credentials = get_credentials()
 	http = credentials.authorize(httplib2.Http())
 	service = discovery.build('gmail', 'v1', http=http, cache_discovery=False)
-	today = str(datetime.date.today())
-	yesterday = str(datetime.date.fromordinal(datetime.date.today().toordinal() - 1))
-	todayhours = int(datetime.datetime.now().strftime("%H"))  # Hour of the day in 24 hour format
-
-	if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
-		return 2
 
 	# Check Gmail messages with label 41(CobbEMC Peak Hours)
 	messages = service.users().messages().list(userId='me', labelIds='Label_41').execute().get('messages', [])
@@ -60,12 +62,38 @@ def check_gmail():
 		tdata = service.users().messages().get(userId='me', id=message['id']).execute()
 		epochtime = str(tdata['internalDate'])
 		emaildate = str(datetime.datetime.fromtimestamp(float(epochtime.replace(' ', '')[:-3].upper())).strftime("%Y-%m-%d"))
-		if emaildate == yesterday:
-			valid = 1
-			break
+		with open('hydrogen/cache/messages.cache', 'a') as data_file:
+			data_file.write(emaildate)
+
+
+def hydrogen():
+	valid=''
+	minutes = checkcache_mtime()
+	yesterday = str(datetime.date.fromordinal(datetime.date.today().toordinal() - 1))
+	todayhours = int(datetime.datetime.now().strftime("%H"))  # Hour of the day in 24 hour format
+
+	if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
+		return 2
+
+	if minutes < 288:
+		logging.info("Messages cache file is not 288 minutes old, reading from cache file")
+		with open('hydrogen/cache/messages.cache') as data_file:
+			for line in data_file:
+				if line == yesterday:
+					valid = 1
+					break
+	elif minutes > 288:
+		open('hydrogen/cache/messages.cache', 'w').close()  # Clear the cache file
+		check_gmail()
+		with open('hydrogen/cache/messages.cache') as data_file:
+			for line in data_file:
+				if line == yesterday:
+					valid = 1
+					break
 
 	if valid == 1:
 		logging.info("Ecobee's need to be turned off to avoid peak hours that CobbEMC has set for " + today + " from 2 P.M. EST to 7 P.M. EST")
 		return 1
-
-
+	elif:
+		logging.error("Something went wrong with the hydrogen message cache and we couldn't read the dates")
+		return 2

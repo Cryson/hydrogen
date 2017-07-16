@@ -25,7 +25,7 @@ def main():
 	""" Check for occupancy and act accordingly """
 	program = ecobee.get_current_climate_setting(1)
 	occupancy = ecobee.get_remote_sensors(0)[1]['capability'][2]['value']  # Check if someone is home via proximity
-	peakhours = hydrogen.check_gmail()
+	peakhours = hydrogen.hydrogen()
 	if peakhours == 1:
 		logging.info("Peak hours WERE found in hydrogen_check_gmail")
 		result = 1

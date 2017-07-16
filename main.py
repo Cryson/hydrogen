@@ -48,7 +48,7 @@ def main():
 					outfile.write(str(occupancyint))
 					logging.info("Occupancy said nobody is home, increasing cache to " + str(occupancyint))
 				with open('hydrogen/cache/occupancy.cache', 'r') as infile:
-					occupancyint = infile.read()
+					occupancyint = int(infile.read())
 				if occupancyint >= 9:
 					logging.info("Looks like nobody is home, turning to off hvac mode to save power")
 					result = 4

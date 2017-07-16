@@ -71,15 +71,16 @@ def hydrogen():
 	minutes = checkcache_mtime()
 	yesterday = str(datetime.date.fromordinal(datetime.date.today().toordinal() - 1))
 	todayhours = int(datetime.datetime.now().strftime("%H"))  # Hour of the day in 24 hour format
+	today = str(datetime.date.today())
 
-	if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
-		return 2
+	#if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
+	#	return 2
 
 	if minutes < 288:
 		logging.info("Messages cache file is not 288 minutes old, reading from cache file")
 		with open('hydrogen/cache/messages.cache') as data_file:
 			for line in data_file:
-				if line == yesterday:
+				if line.rstrip('\n') == yesterday:
 					valid = 1
 					break
 	elif minutes > 288:
@@ -87,7 +88,7 @@ def hydrogen():
 		check_gmail()
 		with open('hydrogen/cache/messages.cache') as data_file:
 			for line in data_file:
-				if line == yesterday:
+				if line.rstrip('\n') == yesterday:
 					valid = 1
 					break
 
@@ -95,5 +96,5 @@ def hydrogen():
 		logging.info("Ecobee's need to be turned off to avoid peak hours that CobbEMC has set for " + today + " from 2 P.M. EST to 7 P.M. EST")
 		return 1
 	elif valid != 1:
-		logging.error("Something went wrong with the hydrogen message cache and we couldn't read the dates")
+		logging.info("No dates in the Hydrogen messages cache match yesterdays date! No Peak Hours!")
 		return 2

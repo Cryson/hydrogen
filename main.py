@@ -51,7 +51,7 @@ def main():
 		logging.info("Peak hours WERE found in hydrogen_check_gmail")
 		result = 1
 	elif peakhours != 1:
-		logging.info("Peak hours were NOT found in hydrogen_check_gmail")
+		logging.info("Peak hours were not found in Hydrogen")
 		if program == "sleep":
 			logging.info("Ecobee is reporting sleep program, setting result to 2")
 			result = 2

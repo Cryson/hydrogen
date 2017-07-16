@@ -74,6 +74,7 @@ def hydrogen():
 	today = str(datetime.date.today())
 
 	if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
+		logging.info("Hydrogen is reporting that it's not peak hours. Current hour is " + str(todayhours))
 		return 2
 
 	if minutes < 288:

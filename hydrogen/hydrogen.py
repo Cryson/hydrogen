@@ -72,8 +72,8 @@ def hydrogen():
 	yesterday = str(datetime.date.fromordinal(datetime.date.today().toordinal() - 1))
 	todayhours = int(datetime.datetime.now().strftime("%H"))  # Hour of the day in 24 hour format
 
-	#if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
-	#	return 2
+	if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
+		return 2
 
 	if minutes < 288:
 		logging.info("Messages cache file is not 288 minutes old, reading from cache file")

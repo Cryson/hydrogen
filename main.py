@@ -5,6 +5,7 @@ import os
 import logging
 import requests
 import datetime
+import subprocess
 
 from ecobee import ecobee
 from hydrogen import hydrogen
@@ -15,12 +16,32 @@ logging.basicConfig(filename='log/hydrogen.log', level=logging.DEBUG)
 # Set your ecobee index list
 thermostatlist = [0, 1]
 
+def internet_check():
+	with open(os.devnull, 'w') as DEVNULL:
+		try:
+			subprocess.check_call(
+				['ping', '-c', '3', '8.8.8.8'],
+				stdout=DEVNULL,  # suppress output
+				stderr=DEVNULL
+			)
+			is_up = 0
+		except subprocess.CalledProcessError:
+			is_up = 1
+	return is_up
+
 
 def main():
 	now = datetime.datetime.now()
 	logging.info("######################")
 	logging.info("Hydrogen ran at " + str(now))
 	logging.info("######################")
+
+        ping_check = internet_check()
+        if ping_check != 0:
+                logging.error("Internet is down, exiting!")
+                sys.exit(1)
+	elif ping_check == 0:
+		logging.info("Internet is up! Continuing")
 
 	""" Check for occupancy and act accordingly """
 	program = ecobee.get_current_climate_setting(1)

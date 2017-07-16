@@ -14,15 +14,6 @@ with open('ecobee/data/ecobee_authentication.json') as data_file:
 	authcode = data['code']
 
 
-# Only used to initialize the ecobee application on the developer console (myapp) console on ecobee.com
-def get_ecobee_pin():
-	url = "https://api.ecobee.com/authorize"
-	params = {'response_type': 'ecobeePin', 'client_id': apikey, 'scope': 'smartWrite'}
-	request = requests.get(url, params=params)
-	with open('ecobee/data/ecobee_authentication.json', 'w') as outfile:
-		json.dump(request.json(), outfile)
-
-
 # Get initial tokens
 def get_tokens():
 	url = 'https://api.ecobee.com/token'

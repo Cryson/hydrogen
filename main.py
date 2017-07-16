@@ -69,9 +69,6 @@ def main():
 		elif ctemp <= 65:
 			hvacmode = 'heat'
 
-		if occupancy == "false":
-			logging.info("It's not peak hours right now, setting ecobees to " + hvacmode)
-
 		for i in thermostatlist:
 			requesthvacset = ecobee.set_hvac_mode(i, hvacmode)
 			if requesthvacset.status_code == requests.codes.ok:

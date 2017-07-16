@@ -63,7 +63,7 @@ def check_gmail():
 		epochtime = str(tdata['internalDate'])
 		emaildate = str(datetime.datetime.fromtimestamp(float(epochtime.replace(' ', '')[:-3].upper())).strftime("%Y-%m-%d"))
 		with open('hydrogen/cache/messages.cache', 'a') as data_file:
-			data_file.write(emaildate)
+			data_file.write(emaildate + "\n")
 
 
 def hydrogen():
@@ -72,8 +72,8 @@ def hydrogen():
 	yesterday = str(datetime.date.fromordinal(datetime.date.today().toordinal() - 1))
 	todayhours = int(datetime.datetime.now().strftime("%H"))  # Hour of the day in 24 hour format
 
-	if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
-		return 2
+	#if todayhours not in range(14, 19):  # Check if it is peak hours for CobbEMC
+	#	return 2
 
 	if minutes < 288:
 		logging.info("Messages cache file is not 288 minutes old, reading from cache file")

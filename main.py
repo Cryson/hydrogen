@@ -74,6 +74,9 @@ def main():
 				if occupancyint >= 9:
 					logging.info("Looks like nobody is home, turning to off hvac mode to save power")
 					result = 4
+				elif occupancyint <= 8:
+					logging.info("Occupancy is less than 8, result is being set to 2")
+					result = 2
 
 	""" Check for results of test and act accordingly """
 	""" Result of 1 means that the ecobees need to be turned off to avoid peak hours """
@@ -85,9 +88,10 @@ def main():
 				logging.info("Successfully set thermostat index " + str(i) + " to off hvac mode")
 	elif result == 2:  # Someone is home or asleep, and/or not peak hours
 		ctemp = wunderground.get_current_temperature()
-		if ctemp >= 66:
+		logging.info("Result was 2, current outside temperature returned " + str(ctemp) + " degrees F")
+		if ctemp >= 64:
 			hvacmode = 'cool'
-		elif ctemp <= 65:
+		elif ctemp <= 63:
 			hvacmode = 'heat'
 
 		for i in thermostatlist:

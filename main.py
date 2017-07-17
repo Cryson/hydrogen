@@ -16,6 +16,7 @@ logging.basicConfig(filename='log/hydrogen.log', level=logging.DEBUG)
 # Set your ecobee index list
 thermostatlist = [0, 1]
 
+
 def internet_check():
 	with open(os.devnull, 'w') as DEVNULL:
 		try:
@@ -36,10 +37,10 @@ def main():
 	logging.info("Hydrogen ran at " + str(now))
 	logging.info("######################")
 
-        ping_check = internet_check()
-        if ping_check != 0:
-                logging.error("Internet is down, exiting!")
-                sys.exit(1)
+	ping_check = internet_check()
+	if ping_check != 0:
+		logging.error("Internet is down, exiting!")
+		sys.exit(1)
 	elif ping_check == 0:
 		logging.info("Internet is up! Continuing")
 
@@ -73,7 +74,6 @@ def main():
 				if occupancyint >= 9:
 					logging.info("Looks like nobody is home, turning to off hvac mode to save power")
 					result = 4
-
 
 	""" Check for results of test and act accordingly """
 	""" Result of 1 means that the ecobees need to be turned off to avoid peak hours """

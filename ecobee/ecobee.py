@@ -2,6 +2,7 @@ import json
 import requests
 import logging
 import sys
+import time
 
 logging.basicConfig(filename='log/hydrogen.log', level=logging.INFO)
 
@@ -41,7 +42,7 @@ def refresh_tokens(refresh_token):
 
 
 # Get all data for all thermostats
-def get_thermostats():
+def get_thermostats(attempts=0):
 	with open('ecobee/data/ecobee_tokens.json') as data_file:
 		data = json.load(data_file)
 		accesstoken = data['access_token']
@@ -58,12 +59,21 @@ def get_thermostats():
 						'"includeEvents":"true",'
 						'"includeSettings":"true"}}')}
 	request = requests.get(url, headers=header, params=params)
+	if 'thermostatList' not in request.json():
+		if attempts <= 3:
+			attempts += 1
+			logging.info("thermostatList not found in ecobee json payload. BAD! Trying again, this is the " + str(attempts) + " attempt")
+			time.sleep(15)
+			refresh_tokens(refresh_token)
+			get_thermostats(attempts)
+		elif attempts > 3:
+			logging.info("ecobee payload failed. attempts were greater than 3, trying again later")
+			sys.exit(0)
+	
 	if request.status_code == requests.codes.ok:
-		authenticated = True
 		thermostats = request.json()['thermostatList']
 		return thermostats
 	else:
-		authenticated = False
 		if refresh_tokens(refresh_token):
 			return get_thermostats()
 		else:

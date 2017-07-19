@@ -4,7 +4,7 @@ import logging
 import sys
 import time
 
-logging.basicConfig(filename='log/hydrogen.log', level=logging.DEBUG)
+logging.basicConfig(filename='log/hydrogen.log', level=logging.INFO)
 
 with open('ecobee/data/ecobee_secret.json') as data_file:
 	data = json.load(data_file)

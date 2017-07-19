@@ -12,7 +12,7 @@ from ecobee import ecobee
 from hydrogen import hydrogen
 from wunderground import wunderground
 
-logging.basicConfig(filename='log/hydrogen.log', level=logging.DEBUG)
+logging.basicConfig(filename='log/hydrogen.log', level=logging.INFO)
 
 # Set your ecobee index list
 thermostatlist = [0, 1]

@@ -49,6 +49,9 @@ def pull_weather_json():
 	humidity = float(humidity)
 	feels_like = float(w['current_observation']['feelslike_f'])
 	dewpoint = float(w['current_observation']['dewpoint_f'])
+	
+	if 'current_observation' not in w:
+		logging.info("weather json isn't normal")
 
 	with open('wunderground/cache/wunderground.cache', 'w') as data_file:
 		data_file.write('%s' % currenttemp)	
@@ -58,11 +61,11 @@ def pull_weather_json():
 
 def get_current_temperature():
 	minutes = checkcache_mtime()
-	if minutes > 30:
+	if minutes >= 30:
 		logging.info("Pulling new outside temperature")
 		temp = pull_weather_json()
 		return temp
-	elif minutes < 30:
+	elif minutes <= 29:
 		logging.info("Using cached outside temperature, as old temp isn't 30 minutes old")
 		with open('wunderground/cache/wunderground.cache', 'r') as data_file:
 			temp = data_file.read()

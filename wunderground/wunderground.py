@@ -1,7 +1,9 @@
+import os
 import json
 import urllib2
 import ConfigParser
 import logging
+import time
 
 logging.basicConfig(filename='log/hydrogen.log', level=logging.INFO)
 
@@ -26,6 +28,13 @@ def getWeatherCondition():
 		print("Could not get weather data")
 		return e
 
+def checkcache_mtime():
+	epoch = os.path.getmtime('wunderground/cache/wunderground.cache')
+	currenttime = time.time()
+	seconds = currenttime - epoch
+	minutes = seconds // 60 % 60
+
+	return minutes
 
 def pull_weather_json():
 	weather = getWeatherCondition()
@@ -41,10 +50,23 @@ def pull_weather_json():
 	feels_like = float(w['current_observation']['feelslike_f'])
 	dewpoint = float(w['current_observation']['dewpoint_f'])
 
+	with open('wunderground/cache/wunderground.cache', 'w') as data_file:
+		data_file.write('%s' % currenttemp)	
+
 	return currenttemp
 
 
 def get_current_temperature():
-	return pull_weather_json()
+	minutes = checkcache_mtime()
+	if minutes > 30:
+		logging.info("Pulling new outside temperature")
+		temp = pull_weather_json()
+		return temp
+	elif minutes < 30:
+		logging.info("Using cached outside temperature, as old temp isn't 30 minutes old")
+		with open('wunderground/cache/wunderground.cache', 'r') as data_file:
+			temp = data_file.read()
+			return temp 
+
 
 

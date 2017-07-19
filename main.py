@@ -6,6 +6,7 @@ import logging
 import requests
 import datetime
 import subprocess
+import json
 
 from ecobee import ecobee
 from hydrogen import hydrogen
@@ -45,6 +46,11 @@ def main():
 		logging.info("Internet is up! Continuing")
 
 	""" Check for occupancy and act accordingly """
+        with open('ecobee/data/ecobee_tokens.json') as data_file:
+                data = json.load(data_file)
+                refresh_token = data['refresh_token']
+
+	ecobee.refresh_tokens(refresh_token)
 	program = ecobee.get_current_climate_setting(1)
 	occupancy = ecobee.get_remote_sensors(0)[1]['capability'][2]['value']  # Check if someone is home via proximity
 	peakhours = hydrogen.hydrogen()
@@ -71,11 +77,11 @@ def main():
 					logging.info("Occupancy said nobody is home, increasing cache to " + str(occupancyint))
 				with open('hydrogen/cache/occupancy.cache', 'r') as infile:
 					occupancyint = int(infile.read())
-				if occupancyint >= 9:
+				if occupancyint >= 18:
 					logging.info("Looks like nobody is home, turning to off hvac mode to save power")
 					result = 4
-				elif occupancyint <= 8:
-					logging.info("Occupancy is less than 8, result is being set to 2")
+				elif occupancyint <= 17:
+					logging.info("Occupancy is less than 17, result is being set to 2")
 					result = 2
 
 	""" Check for results of test and act accordingly """
@@ -89,9 +95,9 @@ def main():
 	elif result == 2:  # Someone is home or asleep, and/or not peak hours
 		ctemp = wunderground.get_current_temperature()
 		logging.info("Result was 2, current outside temperature returned " + str(ctemp) + " degrees F")
-		if ctemp >= 64:
+		if ctemp >= 51:
 			hvacmode = 'cool'
-		elif ctemp <= 63:
+		elif ctemp <= 50:
 			hvacmode = 'heat'
 
 		for i in thermostatlist:

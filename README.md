@@ -8,6 +8,14 @@
 <br><br>
 This application was built for my own home automation purposes, so it might not exactly suite your own home automation needs. However feel free to cherry pick stuff that would be relevent for your project!
 
+# Requirements
+
+* Linux / MacOSX, [`git bash`](https://git-scm.com/download/win) for Windows
+
+## Development
+
+* [python2.7+](https://www.python.org/)
+
 ## Hydrogen Workflow
 
 1. Hydrogen first detects peak hours for CobbEMC electric company via the Gmail API, and searches for a custom label for CobbEMC peak hour emails.
